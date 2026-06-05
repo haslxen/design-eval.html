@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оценка тестового задания</title>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2333;
+    --border: #2a3050;
+    --accent: #4f7cff;
+    --accent2: #7b5ea7;
+    --green: #22c55e;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --text: #e8ecf4;
+    --text2: #8892aa;
+    --text3: #4a5470;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(79,124,255,0.1);
+    border: 1px solid rgba(79,124,255,0.25);
+    padding: 4px 14px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #e8ecf4 0%, #7b9fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+
+  .header-sub {
+    color: var(--text2);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+
+  .card:hover { border-color: #3a4570; }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 3px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* Two-column inputs */
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) { .row-2 { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+
+  input[type="text"], textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: 'Golos Text', sans-serif;
+    font-size: 15px;
+    padding: 12px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,124,255,0.12);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--text3); }
+
+  textarea { resize: vertical; min-height: 100px; }
+
+  /* Criteria rows */
+  .criterion-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(42,48,80,0.5);
+  }
+
+  .criterion-row:last-child { border-bottom: none; }
+
+  .criterion-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text);
+    min-width: 0;
+  }
+
+  .score-btns {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .score-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .score-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .score-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(79,124,255,0.4);
+    transform: scale(1.08);
+  }
+
+  @media (max-width: 480px) {
+    .criterion-row { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .score-btns { width: 100%; justify-content: flex-start; }
+    .score-btn { width: 40px; height: 40px; flex: 1; max-width: 48px; }
+  }
+
+  /* Flags */
+  .flags-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 520px) { .flags-grid { grid-template-columns: 1fr; } }
+
+  .flag-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .flag-item:hover { border-color: #3a4570; }
+
+  .flag-item.red-flag.checked {
+    background: rgba(239,68,68,0.08);
+    border-color: rgba(239,68,68,0.35);
+  }
+
+  .flag-item.green-flag.checked {
+    background: rgba(34,197,94,0.08);
+    border-color: rgba(34,197,94,0.35);
+  }
+
+  .flag-item input[type="checkbox"] { display: none; }
+
+  .flag-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .flag-item.red-flag.checked .flag-check {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .flag-item.green-flag.checked .flag-check {
+    background: var(--green);
+    border-color: var(--green);
+  }
+
+  .flag-check::after {
+    content: '✓';
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .flag-item.checked .flag-check::after { opacity: 1; }
+
+  .flag-label { font-size: 13px; color: var(--text); line-height: 1.3; }
+
+  /* Result panel */
+  .result-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    display: none;
+  }
+
+  .result-panel.visible { display: block; animation: fadeUp 0.3s ease; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-top {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .score-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 3px solid;
+    transition: all 0.4s;
+  }
+
+  .score-circle .big-num {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .score-circle .small-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .score-circle.green { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.08); }
+  .score-circle.orange { border-color: var(--orange); color: var(--orange); background: rgba(245,158,11,0.08); }
+  .score-circle.red { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.08); }
+
+  .result-verdict {
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .verdict-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 6px;
+  }
+
+  .verdict-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
+    transition: color 0.3s;
+  }
+
+  .verdict-text.green { color: var(--green); }
+  .verdict-text.orange { color: var(--orange); }
+  .verdict-text.red { color: var(--red); }
+
+  /* Score breakdown */
+  .score-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .breakdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    gap: 8px;
+  }
+
+  .breakdown-name { color: var(--text2); flex: 1; }
+  .breakdown-score {
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 24px;
+    border-radius: var(--radius-sm);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    flex: 1;
+    justify-content: center;
+    min-width: 160px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f7cff, #7b5ea7);
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(79,124,255,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(79,124,255,0.45);
+  }
+
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-danger {
+    background: rgba(239,68,68,0.1);
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.25);
+  }
+
+  .btn-danger:hover {
+    background: rgba(239,68,68,0.18);
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s;
+    pointer-events: none;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* History table */
+  .history-section { margin-top: 40px; }
+
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 520px;
+  }
+
+  thead {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    padding: 12px 16px;
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--text2);
+  }
+
+  td {
+    padding: 13px 16px;
+    border-bottom: 1px solid rgba(42,48,80,0.4);
+    color: var(--text);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .pill.green { background: rgba(34,197,94,0.12); color: var(--green); }
+  .pill.orange { background: rgba(245,158,11,0.12); color: var(--orange); }
+  .pill.red { background: rgba(239,68,68,0.12); color: var(--red); }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+    font-size: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .empty-state-icon { font-size: 32px; margin-bottom: 10px; }
+
+  /* Divider labels */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 8px 0 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .section-divider.red-label { color: var(--red); }
+  .section-divider.green-label { color: var(--green); }
+
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+  }
+
+  .red-label::before, .red-label::after { background: rgba(239,68,68,0.2); }
+  .green-label::before, .green-label::after { background: rgba(34,197,94,0.2); }
+
+  /* Red flags warning banner */
+  .redflags-warning {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: rgba(239,68,68,0.08);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--red);
+    font-weight: 600;
+  }
+
+  .redflags-warning.visible { display: flex; }
+
+  @media (max-width: 440px) {
+    .btn-row { flex-direction: column; }
+    .btn { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-badge">HR Dashboard</div>
+    <h1>Оценка тестового задания</h1>
+    <p class="header-sub">Система оценки кандидатов на дизайн-позиции</p>
+  </header>
+
+  <!-- Participants -->
+  <div class="card">
+    <div class="card-title">Участники</div>
+    <div class="row-2">
+      <div class="field">
+        <label for="candidate">Имя кандидата</label>
+        <input type="text" id="candidate" placeholder="Иван Иванов">
+      </div>
+      <div class="field">
+        <label for="reviewer">Проверяющий</label>
+        <input type="text" id="reviewer" placeholder="Анна Петрова">
+      </div>
+    </div>
+  </div>
+
+  <!-- Criteria -->
+  <div class="card">
+    <div class="card-title">Критерии оценки</div>
+    <div id="criteria-list">
+      <!-- filled by JS -->
+    </div>
+  </div>
+
+  <!-- Flags -->
+  <div class="card">
+    <div class="card-title">Флаги</div>
+
+    <div class="section-divider red-label">🚩 Ред-флаги</div>
+    <div class="flags-grid" id="red-flags-grid"></div>
+    <div class="redflags-warning" id="redflags-warning">
+      ⚠️ Ред-флаги активированы — итоговая рекомендация будет «ОТКАЗ»
+    </div>
+
+    <div class="section-divider green-label" style="margin-top:24px;">✅ Плюсы кандидата</div>
+    <div class="flags-grid" id="green-flags-grid"></div>
+  </div>
+
+  <!-- Comment -->
+  <div class="card">
+    <div class="card-title">Комментарий</div>
+    <div class="field">
+      <textarea id="comment" placeholder="Дополнительные замечания, впечатления, рекомендации..."></textarea>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="calculate()">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 5a2 2 0 012-2h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5z"/></svg>
+      Рассчитать
+    </button>
+    <button class="btn btn-secondary" onclick="copyResult()">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+      Скопировать результат
+    </button>
+  </div>
+
+  <!-- Result Panel -->
+  <div class="result-panel" id="result-panel">
+    <div class="card-title">Результат оценки</div>
+    <div class="result-top">
+      <div class="score-circle" id="score-circle">
+        <span class="big-num" id="avg-num">—</span>
+        <span class="small-lbl">из 5</span>
+      </div>
+      <div class="result-verdict">
+        <div class="verdict-label">Рекомендация</div>
+        <div class="verdict-text" id="verdict-text">—</div>
+      </div>
+    </div>
+    <div class="score-breakdown" id="score-breakdown"></div>
+  </div>
+
+  <!-- History -->
+  <div class="history-section">
+    <div class="history-header">
+      <div class="section-title">История оценок</div>
+      <button class="btn btn-danger" style="flex:unset;min-width:unset;" onclick="clearHistory()">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        Удалить историю
+      </button>
+    </div>
+    <div id="history-container"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✓ Скопировано в буфер обмена</div>
+
+<script>
+const CRITERIA = [
+  'Соответствие ТЗ',
+  'Композиция',
+  'Работа с изображениями',
+  'Коммерческий потенциал',
+  'Насмотренность и стиль',
+  'Качество исходников',
+  'Типографика',
+];
+
+const RED_FLAGS = [
+  'Не выполнено ТЗ',
+  'Использован ИИ без доработки',
+  'Очень плохое качество файлов',
+  'Отсутствует композиция',
+  'Плохая вырезка объектов',
+  'Колхозный визуальный стиль',
+];
+
+const GREEN_FLAGS = [
+  'Хорошая насмотренность',
+  'Коммерческий стиль',
+  'Качественная композиция',
+  'Аккуратная вырезка',
+  'Хорошая работа с типографикой',
+  'Виден потенциал',
+  'Быстрое выполнение',
+];
+
+// Scores state
+const scores = {};
+CRITERIA.forEach(c => scores[c] = 0);
+
+// Build criteria list
+const criteriaList = document.getElementById('criteria-list');
+CRITERIA.forEach(name => {
+  const row = document.createElement('div');
+  row.className = 'criterion-row';
+
+  const label = document.createElement('span');
+  label.className = 'criterion-name';
+  label.textContent = name;
+  row.appendChild(label);
+
+  const btns = document.createElement('div');
+  btns.className = 'score-btns';
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'score-btn';
+    btn.textContent = i;
+    btn.setAttribute('data-criterion', name);
+    btn.setAttribute('data-score', i);
+    btn.addEventListener('click', function() {
+      scores[name] = i;
+      btns.querySelectorAll('.score-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+    btns.appendChild(btn);
+  }
+  row.appendChild(btns);
+  criteriaList.appendChild(row);
+});
+
+// Build flag grids
+function buildFlags(containerId, flags, type) {
+  const grid = document.getElementById(containerId);
+  flags.forEach(text => {
+    const item = document.createElement('label');
+    item.className = `flag-item ${type}`;
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.name = type;
+    cb.value = text;
+    item.appendChild(cb);
+
+    const check = document.createElement('span');
+    check.className = 'flag-check';
+    item.appendChild(check);
+
+    const lbl = document.createElement('span');
+    lbl.className = 'flag-label';
+    lbl.textContent = text;
+    item.appendChild(lbl);
+
+    item.addEventListener('click', () => {
+      cb.checked = !cb.checked;
+      item.classList.toggle('checked', cb.checked);
+      if (type === 'red-flag') updateRedFlagWarning();
+    });
+
+    grid.appendChild(item);
+  });
+}
+
+buildFlags('red-flags-grid', RED_FLAGS, 'red-flag');
+buildFlags('green-flags-grid', GREEN_FLAGS, 'green-flag');
+
+function updateRedFlagWarning() {
+  const any = [...document.querySelectorAll('input[name="red-flag"]:checked')].length > 0;
+  document.getElementById('redflags-warning').classList.toggle('visible', any);
+}
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
+}
+
+function getVerdict(avg, hasRedFlags) {
+  if (hasRedFlags) return { text: 'ОТКАЗ', cls: 'red' };
+  if (avg >= 4.5) return { text: 'Сильный кандидат', cls: 'green' };
+  if (avg >= 3.5) return { text: 'Пригласить на собеседование', cls: 'orange' };
+  return { text: 'Отказ', cls: 'red' };
+}
+
+let lastResult = null;
+
+function calculate() {
+  const candidate = document.getElementById('candidate').value.trim() || 'Не указан';
+  const reviewer = document.getElementById('reviewer').value.trim() || 'Не указан';
+  const comment = document.getElementById('comment').value.trim();
+
+  const filled = CRITERIA.filter(c => scores[c] > 0);
+  const sum = filled.reduce((a, c) => a + scores[c], 0);
+  const avg = filled.length ? (sum / filled.length) : 0;
+  const avgStr = filled.length ? avg.toFixed(2) : '—';
+
+  const redFlags = getChecked('red-flag');
+  const greenFlags = getChecked('green-flag');
+  const hasRed = redFlags.length > 0;
+
+  const verdict = avg > 0 || hasRed ? getVerdict(avg, hasRed) : { text: '—', cls: '' };
+
+  // Show panel
+  const panel = document.getElementById('result-panel');
+  panel.classList.add('visible');
+
+  const circle = document.getElementById('score-circle');
+  circle.className = 'score-circle ' + (avg > 0 ? verdict.cls : '');
+  document.getElementById('avg-num').textContent = avgStr;
+
+  const vt = document.getElementById('verdict-text');
+  vt.textContent = verdict.text;
+  vt.className = 'verdict-text ' + verdict.cls;
+
+  // Breakdown
+  const breakdown = document.getElementById('score-breakdown');
+  breakdown.innerHTML = '';
+  CRITERIA.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'breakdown-item';
+    div.innerHTML = `<span class="breakdown-name">${c}</span><span class="breakdown-score">${scores[c] || '—'}</span>`;
+    breakdown.appendChild(div);
+  });
+
+  // Save to history
+  if (avg > 0 || hasRed) {
+    const record = {
+      candidate, reviewer,
+      scores: { ...scores },
+      avg: avgStr,
+      redFlags, greenFlags, comment,
+      verdict: verdict.text,
+      verdictCls: verdict.cls,
+      date: new Date().toLocaleString('ru-RU', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }),
+    };
+    lastResult = record;
+    saveHistory(record);
+    renderHistory();
+  }
+
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function copyResult() {
+  if (!lastResult) { calculate(); return; }
+  const r = lastResult;
+  const scoresLine = CRITERIA.map(c => `${c}: ${r.scores[c] || '—'}`).join(' ');
+  const redsLine = r.redFlags.length ? r.redFlags.join(', ') : 'Нет';
+  const greensLine = r.greenFlags.length ? r.greenFlags.join(', ') : 'Нет';
+  const text = [
+    `Кандидат: ${r.candidate}`,
+    `Проверяющий: ${r.reviewer}`,
+    scoresLine,
+    `Средний балл: ${r.avg}`,
+    `Ред-флаги: ${redsLine}`,
+    `Плюсы: ${greensLine}`,
+    `Рекомендация: ${r.verdict}`,
+    r.comment ? `Комментарий: ${r.comment}` : '',
+  ].filter(Boolean).join('\n');
+
+  navigator.clipboard.writeText(text).then(() => showToast()).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast();
+  });
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// History
+function saveHistory(record) {
+  const hist = getHistory();
+  hist.unshift(record);
+  localStorage.setItem('eval_history', JSON.stringify(hist.slice(0, 50)));
+}
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('eval_history') || '[]'); } catch { return []; }
+}
+
+function clearHistory() {
+  if (confirm('Удалить всю историю оценок?')) {
+    localStorage.removeItem('eval_history');
+    renderHistory();
+  }
+}
+
+function renderHistory() {
+  const hist = getHistory();
+  const container = document.getElementById('history-container');
+
+  if (!hist.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📋</div>История оценок пуста</div>`;
+    return;
+  }
+
+  const table = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Кандидат</th>
+            <th>Проверяющий</th>
+            <th>Средний балл</th>
+            <th>Рекомендация</th>
+            <th>Дата</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${hist.map(r => `
+            <tr>
+              <td>${r.candidate}</td>
+              <td>${r.reviewer}</td>
+              <td style="font-family:'Montserrat',sans-serif;font-weight:700;">${r.avg}</td>
+              <td><span class="pill ${r.verdictCls}">${r.verdict}</span></td>
+              <td style="color:var(--text2);font-size:12px;">${r.date}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  container.innerHTML = table;
+}
+
+// Init
+renderHistory();
+</script>
+</body>
+</html>
