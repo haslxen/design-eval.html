@@ -735,14 +735,21 @@ const CRITERIA = [
   'Типографика',
 ];
 
-const RED_FLAGS = [
+// Hard red flags = instant rejection regardless of score
+const RED_FLAGS_HARD = [
   'Не выполнено ТЗ',
   'Использован ИИ без доработки',
+  'Колхозный визуальный стиль',
+];
+
+// Soft red flags = noted but do not force rejection
+const RED_FLAGS_SOFT = [
   'Очень плохое качество файлов',
   'Отсутствует композиция',
   'Плохая вырезка объектов',
-  'Колхозный визуальный стиль',
 ];
+
+const RED_FLAGS = [...RED_FLAGS_HARD, ...RED_FLAGS_SOFT];
 
 const GREEN_FLAGS = [
   'Хорошая насмотренность',
@@ -751,7 +758,6 @@ const GREEN_FLAGS = [
   'Аккуратная вырезка',
   'Хорошая работа с типографикой',
   'Виден потенциал',
-  'Быстрое выполнение',
 ];
 
 // Scores state
@@ -810,6 +816,11 @@ function buildFlags(containerId, flags, type) {
     lbl.textContent = text;
     item.appendChild(lbl);
 
+    if (type === 'red-flag' && RED_FLAGS_HARD.includes(text)) {
+      item.setAttribute('data-hard', '1');
+      lbl.innerHTML = text + ' <span style="font-size:10px;font-weight:700;color:var(--red);opacity:0.7;margin-left:4px;">ОТКАЗ</span>';
+    }
+
     item.addEventListener('click', () => {
       cb.checked = !cb.checked;
       item.classList.toggle('checked', cb.checked);
@@ -824,16 +835,33 @@ buildFlags('red-flags-grid', RED_FLAGS, 'red-flag');
 buildFlags('green-flags-grid', GREEN_FLAGS, 'green-flag');
 
 function updateRedFlagWarning() {
-  const any = [...document.querySelectorAll('input[name="red-flag"]:checked')].length > 0;
-  document.getElementById('redflags-warning').classList.toggle('visible', any);
+  const checked = [...document.querySelectorAll('input[name="red-flag"]:checked')].map(c => c.value);
+  const hasHard = checked.some(f => RED_FLAGS_HARD.includes(f));
+  const hasSoft = checked.some(f => RED_FLAGS_SOFT.includes(f));
+  const banner = document.getElementById('redflags-warning');
+  if (hasHard) {
+    banner.innerHTML = '⛔ Критический ред-флаг — итоговая рекомендация будет «ОТКАЗ»';
+    banner.classList.add('visible');
+  } else if (hasSoft) {
+    banner.innerHTML = '⚠️ Ред-флаги отмечены — они учтены, но не блокируют оценку автоматически';
+    banner.style.color = 'var(--orange)';
+    banner.style.borderColor = 'rgba(245,158,11,0.3)';
+    banner.style.background = 'rgba(245,158,11,0.07)';
+    banner.classList.add('visible');
+  } else {
+    banner.classList.remove('visible');
+    banner.style.color = '';
+    banner.style.borderColor = '';
+    banner.style.background = '';
+  }
 }
 
 function getChecked(name) {
   return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(c => c.value);
 }
 
-function getVerdict(avg, hasRedFlags) {
-  if (hasRedFlags) return { text: 'ОТКАЗ', cls: 'red' };
+function getVerdict(avg, hasHardRedFlag) {
+  if (hasHardRedFlag) return { text: 'ОТКАЗ', cls: 'red' };
   if (avg >= 4.5) return { text: 'Сильный кандидат', cls: 'green' };
   if (avg >= 3.5) return { text: 'Пригласить на собеседование', cls: 'orange' };
   return { text: 'Отказ', cls: 'red' };
@@ -853,9 +881,10 @@ function calculate() {
 
   const redFlags = getChecked('red-flag');
   const greenFlags = getChecked('green-flag');
-  const hasRed = redFlags.length > 0;
+  const hasHardRed = redFlags.some(f => RED_FLAGS_HARD.includes(f));
+  const hasSoftRed = redFlags.some(f => RED_FLAGS_SOFT.includes(f));
 
-  const verdict = avg > 0 || hasRed ? getVerdict(avg, hasRed) : { text: '—', cls: '' };
+  const verdict = avg > 0 || hasHardRed ? getVerdict(avg, hasHardRed) : { text: '—', cls: '' };
 
   // Show panel
   const panel = document.getElementById('result-panel');
